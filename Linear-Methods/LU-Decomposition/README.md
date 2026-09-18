@@ -1,4 +1,4 @@
-/*
+
     Method: LU Decomposition using Doolittle's Method
 
     Description:
@@ -15,4 +15,3 @@
     - Type of solution: Unique, Infinite, or No Solution.
     - Variable values for a unique solution.
     - Verification of the obtained solution.
-*/
