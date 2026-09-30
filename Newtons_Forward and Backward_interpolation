@@ -1,0 +1,158 @@
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+int main()
+{
+    int n;
+    cin >> n;
+
+    double x[20], y[20];
+    double diff[20][20] = {0};
+
+    // Input
+    for(int i = 0; i < n; i++)
+    {
+        cin >> x[i] >> y[i];
+        diff[0][i] = y[i];
+    }
+
+    double value;
+    cin >> value;
+
+    // Difference Table
+    for(int i = 1; i < n; i++)
+    {
+        for(int j = 0; j < n-i; j++)
+        {
+            diff[i][j] = diff[i-1][j+1] - diff[i-1][j];
+        }
+    }
+
+    double h = x[1] - x[0];
+
+    // Check whether Forward or Backward is better
+    double firstDistance = fabs(value - x[0]);
+    double lastDistance = fabs(value - x[n-1]);
+
+    // =========================
+    // FORWARD INTERPOLATION
+    // =========================
+
+    if(firstDistance <= lastDistance)
+    {
+        cout << "\nNewton Forward Interpolation\n";
+
+        double u = (value - x[0]) / h;
+
+        // Print polynomial
+        cout << "\nInterpolated Polynomial:\n";
+
+        cout << diff[0][0];
+
+        for(int i = 1; i < n; i++)
+        {
+            double coefficient = diff[i][0];
+
+            // coefficient / i! / h^i
+            double factorial = 1;
+            double hp = 1;
+
+            for(int j = 1; j <= i; j++)
+            {
+                factorial = factorial * j;
+                hp = hp * h;
+            }
+
+            coefficient = coefficient / (factorial * hp);
+
+            cout << " + (" << coefficient << ")";
+
+            for(int j = 0; j < i; j++)
+            {
+                cout << "(x - " << x[j] << ")";
+            }
+        }
+
+        cout << endl;
+
+        // Calculate f(value)
+        double result = diff[0][0];
+        double product = 1;
+
+        for(int i = 1; i < n; i++)
+        {
+            product = product * (u - i + 1) / i;
+
+            result = result + diff[i][0] * product;
+        }
+
+        cout << "\nf(" << value << ") = " << result << endl;
+    }
+
+    // =========================
+    // BACKWARD INTERPOLATION
+    // =========================
+
+    else
+    {
+        cout << "\nNewton Backward Interpolation\n";
+
+        // Backward difference table
+        for(int i = 1; i < n; i++)
+        {
+            for(int j = n-1; j >= i; j--)
+            {
+                diff[i][j] =
+                    diff[i-1][j] - diff[i-1][j-1];
+            }
+        }
+
+        double v = (value - x[n-1]) / h;
+
+        // Print polynomial
+        cout << "\nInterpolated Polynomial:\n";
+
+        cout << diff[0][n-1];
+
+        for(int i = 1; i < n; i++)
+        {
+            double coefficient = diff[i][n-1];
+
+            double factorial = 1;
+            double hp = 1;
+
+            for(int j = 1; j <= i; j++)
+            {
+                factorial = factorial * j;
+                hp = hp * h;
+            }
+
+            coefficient = coefficient / (factorial * hp);
+
+            cout << " + (" << coefficient << ")";
+
+            for(int j = 0; j < i; j++)
+            {
+                cout << "(x - " << x[n-1-j] << ")";
+            }
+        }
+
+        cout << endl;
+
+        // Calculate f(value)
+        double result = diff[0][n-1];
+        double product = 1;
+
+        for(int i = 1; i < n; i++)
+        {
+            product = product * (v + i - 1) / i;
+
+            result = result + diff[i][n-1] * product;
+        }
+
+        cout << "\nf(" << value << ") = " << result << endl;
+    }
+
+    return 0;
+}
