@@ -1,0 +1,108 @@
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+int main()
+{
+    int n;
+    cin >> n;
+
+    double x[20], y[20];
+    double table[20][20] = {0};
+
+    // Input
+    for(int i = 0; i < n; i++)
+    {
+        cin >> x[i] >> y[i];
+        table[0][i] = y[i];
+    }
+
+    double value;
+    cin >> value;
+
+    // Divided Difference Table
+    for(int i = 1; i < n; i++)
+    {
+        for(int j = 0; j < n - i; j++)
+        {
+            table[i][j] =
+                (table[i-1][j+1] - table[i-1][j])
+                / (x[j+i] - x[j]);
+        }
+    }
+
+    // Print divided difference table
+    cout << "\nDivided Difference Table:\n";
+
+    for(int i = 0; i < n; i++)
+    {
+        for(int j = 0; j < n-i; j++)
+        {
+            cout << table[i][j] << " ";
+        }
+        cout << endl;
+    }
+
+    // Interpolated Polynomial
+    cout << "\nInterpolated Polynomial:\n";
+
+    cout << table[0][0];
+
+    for(int i = 1; i < n; i++)
+    {
+        cout << " + (" << table[i][0] << ")";
+
+        for(int j = 0; j < i; j++)
+        {
+            cout << "(x - " << x[j] << ")";
+        }
+    }
+
+    cout << endl;
+
+    // Calculate f(value)
+    double result = table[0][0];
+    double product = 1;
+
+    for(int i = 1; i < n; i++)
+    {
+        product = product * (value - x[i-1]);
+
+        result = result + table[i][0] * product;
+    }
+
+    cout << "\nf(" << value << ") = " << result << endl;
+
+    // Error estimation using one extra point
+    double newX, newY;
+
+    cout << "\nEnter one extra x and f(x): ";
+    cin >> newX >> newY;
+
+    x[n] = newX;
+    table[0][n] = newY;
+
+    // New divided difference
+    for(int i = 1; i <= n; i++)
+    {
+        for(int j = 0; j <= n-i; j++)
+        {
+            table[i][j] =
+                (table[i-1][j+1] - table[i-1][j])
+                / (x[j+i] - x[j]);
+        }
+    }
+
+    double error = 1;
+
+    for(int i = 0; i < n; i++)
+    {
+        error = error * (value - x[i]);
+    }
+
+    error = error * table[n][0];
+
+    cout << "Estimated Error = " << error << endl;
+
+    return 0;
+}
