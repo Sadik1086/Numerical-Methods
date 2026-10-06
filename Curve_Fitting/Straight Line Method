@@ -1,0 +1,53 @@
+//y=a+bx
+#include <iostream>
+using namespace std;
+
+int main()
+{
+    int n;
+    cin >> n;
+
+    double x[100], y[100];
+
+    for(int i = 0; i < n; i++)
+        cin >> x[i] >> y[i];
+
+    double sumX = 0, sumY = 0;
+    double sumXY = 0, sumX2 = 0;
+
+    for(int i = 0; i < n; i++)
+    {
+        sumX += x[i];
+        sumY += y[i];
+        sumXY += x[i] * y[i];
+        sumX2 += x[i] * x[i];
+    }
+
+    double b = (n * sumXY - sumX * sumY)
+             / (n * sumX2 - sumX * sumX);
+
+    double a = (sumY - b * sumX) / n;
+
+    double xNew;
+    cin >> xNew;
+
+    cout << "f(x) = " << a << " + " << b << "x" << endl;
+    cout << "f(" << xNew << ") = "
+         << a + b * xNew << endl;
+
+    return 0;
+}
+/*
+input
+7
+1 3
+2 4
+3 4
+4 5
+5 8
+6 9
+7 10
+10
+output
+f(x) = 1.14286 + 1.21429x
+f(10) = 13.2857
